@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="276dbb3c-17a2-48c0-ba4e-4f2f1aad85f2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/common/Constants.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/Protocol.go" beforeDir="false" afterPath="$PROJECT_DIR$/common/Protocol.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/master/ApiServer.go" beforeDir="false" afterPath="$PROJECT_DIR$/master/ApiServer.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/master/JobMgr.go" beforeDir="false" afterPath="$PROJECT_DIR$/master/JobMgr.go" afterDir="false" />
     </list>
