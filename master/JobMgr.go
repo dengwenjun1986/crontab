@@ -52,7 +52,7 @@ func InitJobMgr()(err error){
 		lease:  lease,
 	}
 
-	G_jobMgr = G_jobMgr
+	//G_jobMgr = G_jobMgr
 	return
 }
 
@@ -67,7 +67,8 @@ func (jobMgr *JobMgr)SaveJob(job *common.Job)(oldjob *common.Job,err error)  {
 	)
 
 	// etcd的保存key
-	jobKey = "/cron/jobs" + job.Name
+	jobKey = "/cron/jobs/" + job.Name
+	fmt.Println(jobKey)
 	//任务信息json
 	if jobValue,err = json.Marshal(job); err != nil {
 		return

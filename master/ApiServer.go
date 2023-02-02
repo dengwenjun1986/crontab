@@ -2,6 +2,7 @@ package master
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/dengwenjun1986/crontab/common"
 	"net"
 	"net/http"
@@ -46,6 +47,7 @@ if oldjob,err = G_jobMgr.SaveJob(&job);err != nil {
 }
 		//5.正常应答 ({"errno":0,"msg":"",data:"{...}" })
 		if bytes,err = common.BuildResponse(0,"success",oldjob);err == nil {
+			fmt.Println(string(bytes))
 			_, _ = resp.Write(bytes)
 		}
 	return
