@@ -76,7 +76,7 @@ func handleJobDelete(resp http.ResponseWriter,req *http.Request){
 	//fmt.Println(name)
 	//删除任务
 	if oldjob,err = G_jobMgr.DeleteJob(name);err != nil {
-		fmt.Println(oldjob)
+		//fmt.Println(oldjob)
 		goto ERR
 	}
 
@@ -92,12 +92,70 @@ func handleJobDelete(resp http.ResponseWriter,req *http.Request){
 			_, _ = resp.Write(bytes)
 		}
 }
+// job list
+func handleJobList(resp http.ResponseWriter,req *http.Request){
+	var (
+		joblist []*common.Job
+		err error
+		bytes []byte
+	)
+	if joblist,err = G_jobMgr.ListJobs();err != nil {
+		goto ERR
+	}
+	// 正常应答
+	if bytes,err = common.BuildResponse(0,"success",joblist);err == nil {
+		//fmt.Printf("删除后返回旧值：%s\n",string(bytes))
+		_, _ = resp.Write(bytes)
+	}
+	return
+ERR:
+	// 异常应答
+	if bytes,err = common.BuildResponse(-1,err.Error(),nil);err == nil {
+		_, _ = resp.Write(bytes)
+	}
+}
+
+// 杀死任务
+// POST /job/kill name=job1
+func handleJobKill(resp http.ResponseWriter,req *http.Request){
+	var (
+		err error
+		name string
+		bytes []byte
+	)
+	// 解析post表单
+	if err = req.ParseForm();err != nil {
+		goto ERR
+	}
+	// 要杀死的任务名
+	name = req.PostForm.Get("name")
+	// 杀死任务
+	if err = G_jobMgr.KillJob(name);err != nil {
+		goto ERR
+	}
+	// 正常应答
+	if bytes,err = common.BuildResponse(0,"success",nil);err == nil {
+		//fmt.Printf("删除后返回旧值：%s\n",string(bytes))
+		_, _ = resp.Write(bytes)
+	}
+	return
+ERR:
+	// 异常应答
+	if bytes,err = common.BuildResponse(-1,err.Error(),nil);err == nil {
+		_, _ = resp.Write(bytes)
+	}
+}
+
+
+
 // 初始化服务
 func InitApiServer()(err error){
 	var (
 		mux *http.ServeMux
 		listener net.Listener
 		httpServer *http.Server
+		staticDir http.Dir // 静态文件根目录
+		staticHandler http.Handler// 静态文件的HTTP回调
 	)
 	// 配置路由
 	mux = http.NewServeMux()
@@ -105,6 +163,15 @@ func InitApiServer()(err error){
 	mux.HandleFunc("/job/save",handleJobSave)
 	// job删除接口
 	mux.HandleFunc("/job/delete",handleJobDelete)
+	// job查看接口
+	mux.HandleFunc("/job/list",handleJobList)
+	// 杀死任务
+	mux.HandleFunc("/job/kill",handleJobKill)
+
+	//静态文件目录
+	staticDir = http.Dir(G_config.WebRoot)
+	staticHandler = http.FileServer(staticDir)
+	mux.Handle("/",http.StripPrefix("/",staticHandler)) // ./webroot/index.html
 
 	// 启动TCP监听
 	if listener,err = net.Listen("tcp",":" + strconv.Itoa(G_config.ApiPort));err != nil {
